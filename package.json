@@ -1,0 +1,14 @@
+{
+  "name": "com.haegindev.adhnetwork",
+  "version": "0.1.0",
+  "displayName": "ADHNetwork",
+  "description": "test http network package",
+  "unity": "2022.3",
+  "unityRelease": "0b5",
+  "documentationUrl": "https://example.com/",
+  "author": {
+    "name": "Donghyun An",
+    "email": "fblood53@haegin.kr",
+    "url": ""
+  }
+}
