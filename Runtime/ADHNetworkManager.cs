@@ -14,8 +14,6 @@ public static class ADHNetworkManager {
     public static string ServerUrl { get; private set; } = "http://10.10.2.216:7777";
     public static HttpClient Client { get; private set; } = new HttpClient();
 
-    public static AES aes = new AES();
-
     private static Dictionary<ProtocolID, IProtocolHandler> handlerMap = new Dictionary<ProtocolID, IProtocolHandler>()
     { { ProtocolID.PostTest, new PostTestHandler() }, };
 
@@ -53,7 +51,7 @@ public static class ADHNetworkManager {
             using (Stream st = await m.Content.ReadAsStreamAsync())
             using (EncryptedData data = await MemoryPackSerializer.DeserializeAsync<EncryptedData>(st)) {
 
-                byte[] decryptedData = aes.DecryptAes(data.Data, data.IV);
+                byte[] decryptedData = AES.DecryptAES(data.Data, data.IV);
                 ProtocolRes res = MemoryPackSerializer.Deserialize<ProtocolRes>(decryptedData);
                 handlerMap[req.ProtocolID].Process(res);
 
@@ -70,7 +68,7 @@ public static class ADHNetworkManager {
         try {
             
             byte[] reqBytes = MemoryPackSerializer.Serialize(req);
-            (byte[] encryptedReq, byte[] iv) = aes.EncryptAes(reqBytes);
+            (byte[] encryptedReq, byte[] iv) = AES.EncryptAES(reqBytes);
 
             using (EncryptedData encryptedData = new EncryptedData(encryptedReq, iv)) {
 
@@ -80,7 +78,7 @@ public static class ADHNetworkManager {
                     byte[] mb = await m.Content.ReadAsByteArrayAsync();
                     using (EncryptedData data = MemoryPackSerializer.Deserialize<EncryptedData>(mb)) {
 
-                        byte[] decryptedData = aes.DecryptAes(data.Data, data.IV);
+                        byte[] decryptedData = AES.DecryptAES(data.Data, data.IV);
                         ProtocolRes res = MemoryPackSerializer.Deserialize<ProtocolRes>(decryptedData);
 
                         handlerMap[req.ProtocolID].Process(res);
@@ -98,7 +96,7 @@ public static class ADHNetworkManager {
     public static async UniTask PutRequestAsync(ProtocolReq req, IProtocolHandler handler) {
 
         byte[] reqBytes = MemoryPackSerializer.Serialize(req);
-        (byte[] encryptedReq, byte[] iv) = aes.EncryptAes(reqBytes);
+        (byte[] encryptedReq, byte[] iv) = AES.EncryptAES(reqBytes);
 
         using (EncryptedData encryptedData = new EncryptedData(encryptedReq, iv)) {
 
@@ -108,7 +106,7 @@ public static class ADHNetworkManager {
             using (Stream st = await m.Content.ReadAsStreamAsync())
             using (EncryptedData data = await MemoryPackSerializer.DeserializeAsync<EncryptedData>(st)) {
 
-                byte[] decryptedData = aes.DecryptAes(data.Data, data.IV);
+                byte[] decryptedData = AES.DecryptAES(data.Data, data.IV);
                 ProtocolRes res = MemoryPackSerializer.Deserialize<ProtocolRes>(decryptedData);
                 handler.Process(res);
 
@@ -123,7 +121,7 @@ public static class ADHNetworkManager {
         using (Stream st = await m.Content.ReadAsStreamAsync())
         using (EncryptedData data = await MemoryPackSerializer.DeserializeAsync<EncryptedData>(st)) {
 
-            byte[] decryptedData = aes.DecryptAes(data.Data, data.IV);
+            byte[] decryptedData = AES.DecryptAES(data.Data, data.IV);
             ProtocolRes res = MemoryPackSerializer.Deserialize<ProtocolRes>(decryptedData);
             handler.Process(res);
         }
