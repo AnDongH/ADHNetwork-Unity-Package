@@ -68,7 +68,7 @@ public static class ADHNetworkManager {
     public static async UniTask PostRequestAsync(ProtocolReq req) {
 
         try {
-
+            
             byte[] reqBytes = MemoryPackSerializer.Serialize(req);
             (byte[] encryptedReq, byte[] iv) = aes.EncryptAes(reqBytes);
 
