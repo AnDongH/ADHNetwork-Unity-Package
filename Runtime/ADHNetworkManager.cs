@@ -42,7 +42,14 @@ public static class ADHNetworkManager {
         }
 
     }
-
+    /*fail: Microsoft.AspNetCore.Server.Kestrel[13]
+      Connection id "0HN7DP53M96U5", Request id "0HN7DP53M96U5:00000002": An unhandled exception was thrown by the application.
+      System.TypeLoadException: Virtual static method 'Serialize' is not implemented on type 'ADHNetworkShared.Crypto.EncryptedData' from assembly 'ADHNetworkShared, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null'.
+         at TestHttpServer.Routes.PostTest.Invoke(HttpContext context)
+         at System.Runtime.CompilerServices.AsyncMethodBuilderCore.Start[TStateMachine](TStateMachine& stateMachine)
+         at TestHttpServer.Routes.PostTest.Invoke(HttpContext context)
+         at TestHttpServer.Routes.Route.Invoke(HttpContext context) in /mnt/c/Users/0423ADH/source/repos/TestHttpServer/TestHttpServer/Routes/Route.cs:line 36
+         at Microsoft.AspNetCore.Server.Kestrel.Core.Internal.Http.HttpProtocol.ProcessRequests[TContext](IHttpApplication`1 application)*/
     public static async UniTask GetRequestAsync(ProtocolReq req) {
 
         try {
