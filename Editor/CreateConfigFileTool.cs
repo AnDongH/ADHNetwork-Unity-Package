@@ -1,12 +1,18 @@
-using UnityEditor;
-using UnityEngine;
+using System.Collections;
+using System.Collections.Generic;
 using System.IO;
+using UnityEditor;
+using UnityEditor.PackageManager.UI;
+using UnityEngine;
 
-[InitializeOnLoad]
-public static class StreamingAssetsSetup {
-    static StreamingAssetsSetup() {
+public class CreateConfigFileTool : EditorWindow
+{
+
+    [MenuItem("Tool/Create Config")]
+    static void Make() {
+
         // 패키지 내부에 있는 JSON 파일 경로 (커스텀 패키지의 파일 위치)
-        string sourcePath = "Packages/com.haegindev.adhnetwork/ClientConfig.json";
+        string sourcePath = Path.Combine(Application.dataPath, "Packages/com.haegindev.adhnetwork/ClientConfig.json");
 
         // 프로젝트의 StreamingAssets 폴더 경로
         string streamingAssetsPath = Path.Combine(Application.dataPath, "StreamingAssets");
@@ -22,9 +28,10 @@ public static class StreamingAssetsSetup {
 
         // 파일이 없으면 복사
         if (!File.Exists(destinationPath)) {
-
             File.Copy(sourcePath, destinationPath);
             Debug.Log("config.json 파일이 StreamingAssets에 복사되었습니다.");
         }
+
     }
+
 }
