@@ -51,13 +51,11 @@ public static class ADHNetworkManager {
         try {
 
             using (HttpResponseMessage m = await Client.GetAsync($"{ServerUrl}{req.Path}"))
-            using (Stream st = await m.Content.ReadAsStreamAsync())
-            using (EncryptedData data = await MemoryPackSerializer.DeserializeAsync<EncryptedData>(st)) {
-
+            using (Stream st = await m.Content.ReadAsStreamAsync()) {
+                EncryptedData data = await MemoryPackSerializer.DeserializeAsync<EncryptedData>(st);
                 byte[] decryptedData = AES.DecryptAES(data.Data, data.IV);
                 ProtocolRes res = MemoryPackSerializer.Deserialize<ProtocolRes>(decryptedData);
                 handlerMap[req.ProtocolID].Process(res);
-
             }
 
         } catch (Exception ex) {
@@ -73,21 +71,16 @@ public static class ADHNetworkManager {
             byte[] reqBytes = MemoryPackSerializer.Serialize(req);
             (byte[] encryptedReq, byte[] iv) = AES.EncryptAES(reqBytes);
 
-            using (EncryptedData encryptedData = new EncryptedData(encryptedReq, iv)) {
+            EncryptedData encryptedData = new EncryptedData(encryptedReq, iv);
+            byte[] encryptedDataBytes = MemoryPackSerializer.Serialize(encryptedData);
 
-                byte[] encryptedDataBytes = MemoryPackSerializer.Serialize(encryptedData);
+            using (HttpResponseMessage m = await Client.PostAsync($"{ServerUrl}{req.Path}", new ByteArrayContent(encryptedDataBytes))) {
+                byte[] mb = await m.Content.ReadAsByteArrayAsync();
+                EncryptedData data = MemoryPackSerializer.Deserialize<EncryptedData>(mb);
+                byte[] decryptedData = AES.DecryptAES(data.Data, data.IV);
+                ProtocolRes res = MemoryPackSerializer.Deserialize<ProtocolRes>(decryptedData);
 
-                using (HttpResponseMessage m = await Client.PostAsync($"{ServerUrl}{req.Path}", new ByteArrayContent(encryptedDataBytes))) {
-                    byte[] mb = await m.Content.ReadAsByteArrayAsync();
-                    using (EncryptedData data = MemoryPackSerializer.Deserialize<EncryptedData>(mb)) {
-
-                        byte[] decryptedData = AES.DecryptAES(data.Data, data.IV);
-                        ProtocolRes res = MemoryPackSerializer.Deserialize<ProtocolRes>(decryptedData);
-
-                        handlerMap[req.ProtocolID].Process(res);
-
-                    }
-                }
+                handlerMap[req.ProtocolID].Process(res);
             }
         } catch (Exception ex) {
             Debug.LogException(ex);
@@ -95,39 +88,4 @@ public static class ADHNetworkManager {
 
     }
 
-    // 아직 노개발
-    public static async UniTask PutRequestAsync(ProtocolReq req, IProtocolHandler handler) {
-
-        byte[] reqBytes = MemoryPackSerializer.Serialize(req);
-        (byte[] encryptedReq, byte[] iv) = AES.EncryptAES(reqBytes);
-
-        using (EncryptedData encryptedData = new EncryptedData(encryptedReq, iv)) {
-
-            byte[] encryptedDataBytes = MemoryPackSerializer.Serialize(encryptedData);
-
-            using (HttpResponseMessage m = await Client.PutAsync($"{ServerUrl}{req.Path}", new ByteArrayContent(encryptedDataBytes)))
-            using (Stream st = await m.Content.ReadAsStreamAsync())
-            using (EncryptedData data = await MemoryPackSerializer.DeserializeAsync<EncryptedData>(st)) {
-
-                byte[] decryptedData = AES.DecryptAES(data.Data, data.IV);
-                ProtocolRes res = MemoryPackSerializer.Deserialize<ProtocolRes>(decryptedData);
-                handler.Process(res);
-
-            }
-        }
-
-    }
-
-    public static async UniTask DeleteRequestAsync(ProtocolReq req, IProtocolHandler handler) {
-
-        using (HttpResponseMessage m = await Client.DeleteAsync($"{ServerUrl}{req.Path}"))
-        using (Stream st = await m.Content.ReadAsStreamAsync())
-        using (EncryptedData data = await MemoryPackSerializer.DeserializeAsync<EncryptedData>(st)) {
-
-            byte[] decryptedData = AES.DecryptAES(data.Data, data.IV);
-            ProtocolRes res = MemoryPackSerializer.Deserialize<ProtocolRes>(decryptedData);
-            handler.Process(res);
-        }
-
-    }
 }
