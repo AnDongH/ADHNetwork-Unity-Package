@@ -22,6 +22,7 @@ public static class StreamingAssetsSetup {
 
         // 파일이 없으면 복사
         if (!File.Exists(destinationPath)) {
+
             File.Copy(sourcePath, destinationPath);
             Debug.Log("config.json 파일이 StreamingAssets에 복사되었습니다.");
         }
