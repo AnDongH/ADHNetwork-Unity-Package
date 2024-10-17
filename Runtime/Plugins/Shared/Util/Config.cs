@@ -4,7 +4,6 @@ using System.IO;
 using System.Reflection;
 using Microsoft.Extensions.Configuration;
 using System.Text;
-using UnityEngine;
 
 namespace ADHNetworkShared.Util {
 
@@ -13,12 +12,10 @@ namespace ADHNetworkShared.Util {
         public static void Load(string path, ConfigData data) {
 
             var appDirectory = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
-
-
-            Debug.Log(path);
-            Debug.Log(appDirectory);
-            
             string filePath = Path.Combine(appDirectory, path);
+            
+            Console.Write(filePath);
+            
             filePath = SearchParentDirectory(filePath, 4);
 
             var config = new ConfigurationBuilder().AddJsonFile(filePath, optional: false, reloadOnChange: false).Build();
