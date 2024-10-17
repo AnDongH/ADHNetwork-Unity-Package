@@ -31,8 +31,10 @@ public static class ADHNetworkManager {
             using (HttpResponseMessage res = await Client.PostAsync($"{ServerUrl}/handshake", new ByteArrayContent(clientPublicKey.Q.GetEncoded()))) {
             
                 AES.key = DiffieHellman.GenerateSharedSecret(clientPrivateKey, DiffieHellman.RestorePublicBytesToKey(await res.Content.ReadAsByteArrayAsync()));
-            
+                
             }
+
+            Debug.Log("handshake: Success key exchange!");
 
         } catch (Exception ex) {
 
@@ -55,8 +57,7 @@ public static class ADHNetworkManager {
                 
             }
 
-            Debug.Log("handshake: Success key exchange!");
-
+            
         } catch (Exception ex) {
             Debug.LogException(ex);
         }
