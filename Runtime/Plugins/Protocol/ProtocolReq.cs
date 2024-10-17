@@ -5,8 +5,7 @@ using System.Text;
 
 namespace ADHNetworkShared.Protocol {
 
-    [MemoryPackable]
-    [MemoryPackUnion(0, typeof(PostTestReq))]
+    [MemoryPackable(GenerateType.NoGenerate)]
     public abstract partial class ProtocolReq {
         public string Path { get; protected set; }
 

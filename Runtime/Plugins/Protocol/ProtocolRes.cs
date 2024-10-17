@@ -5,8 +5,7 @@ using MemoryPack;
 
 namespace ADHNetworkShared.Protocol {
 
-    [MemoryPackable]
-    [MemoryPackUnion(0, typeof(PostTestRes))]
+    [MemoryPackable(GenerateType.NoGenerate)]
     public abstract partial class ProtocolRes {
 
     }
