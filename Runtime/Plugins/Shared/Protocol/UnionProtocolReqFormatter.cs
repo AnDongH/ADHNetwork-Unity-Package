@@ -10,22 +10,6 @@ using MemoryPack.Formatters;
 
 namespace ADHNetworkShared.Protocol {
 
-    public static class UnionProtocolFormatter {
-        
-        public static void Register() {
-            
-            var req = new DynamicUnionFormatter<ProtocolReq>(
-            (0, typeof(PostTestReq)));
-
-            var res = new DynamicUnionFormatter<ProtocolRes>(
-            (0, typeof(PostTestRes)));
-
-            MemoryPackFormatterProvider.Register(req);
-            MemoryPackFormatterProvider.Register(res);
-        }
-
-    }
-
     [MemoryPackUnionFormatter(typeof(ProtocolReq))]
     [MemoryPackUnion(0, typeof(PostTestReq))]
     public partial class UnionProtocolReqFormatter {

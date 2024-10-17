@@ -11,7 +11,6 @@ using System.Net.Http;
 using UnityEngine;
 
 public static class ADHNetworkManager {
-    public static string ServerUrl { get; private set; } = "http://10.10.3.2:7777";
     public static HttpClient Client { get; private set; } = new HttpClient();
 
     private static Dictionary<ProtocolID, IProtocolHandler> handlerMap = new Dictionary<ProtocolID, IProtocolHandler>()
@@ -21,14 +20,11 @@ public static class ADHNetworkManager {
 
         try {
 
-            UnionProtocolReqFormatterInitializer.RegisterFormatter();
-            UnionProtocolResFormatterInitializer.RegisterFormatter();
-            
             var clientKeyPair = DiffieHellman.GenerateECKeyPair();
             var clientPrivateKey = clientKeyPair.Private as ECPrivateKeyParameters;
             var clientPublicKey = clientKeyPair.Public as ECPublicKeyParameters;
 
-            using (HttpResponseMessage res = await Client.PostAsync($"{ServerUrl}/handshake", new ByteArrayContent(clientPublicKey.Q.GetEncoded()))) {
+            using (HttpResponseMessage res = await Client.PostAsync($"{NetworkSetting.configData.ServerUri}/handshake", new ByteArrayContent(clientPublicKey.Q.GetEncoded()))) {
             
                 AES.key = DiffieHellman.GenerateSharedSecret(clientPrivateKey, DiffieHellman.RestorePublicBytesToKey(await res.Content.ReadAsByteArrayAsync()));
                 
@@ -48,7 +44,7 @@ public static class ADHNetworkManager {
 
         try {
 
-            using (HttpResponseMessage m = await Client.GetAsync($"{ServerUrl}{req.Path}"))
+            using (HttpResponseMessage m = await Client.GetAsync($"{NetworkSetting.configData.ServerUri}{req.Path}"))
             using (Stream st = await m.Content.ReadAsStreamAsync()) {
 
                 EncryptedData data = await MemoryPackSerializer.DeserializeAsync<EncryptedData>(st);
@@ -70,7 +66,7 @@ public static class ADHNetworkManager {
 
             (byte[] encryptedReq, byte[] iv) = AES.EncryptAES(MemoryPackSerializer.Serialize(req));
 
-            using (HttpResponseMessage m = await Client.PostAsync($"{ServerUrl}{req.Path}", new ByteArrayContent(MemoryPackSerializer.Serialize(new EncryptedData(encryptedReq, iv))))) {
+            using (HttpResponseMessage m = await Client.PostAsync($"{NetworkSetting.configData.ServerUri}{req.Path}", new ByteArrayContent(MemoryPackSerializer.Serialize(new EncryptedData(encryptedReq, iv))))) {
             
                 EncryptedData data = MemoryPackSerializer.Deserialize<EncryptedData>(await m.Content.ReadAsByteArrayAsync());
                 ProtocolRes res = MemoryPackSerializer.Deserialize<ProtocolRes>(AES.DecryptAES(data.Data, data.IV));
