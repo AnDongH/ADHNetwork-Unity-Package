@@ -6,7 +6,7 @@ using System.IO;
 public static class StreamingAssetsSetup {
     static StreamingAssetsSetup() {
         // 패키지 내부에 있는 JSON 파일 경로 (커스텀 패키지의 파일 위치)
-        string sourcePath = Path.Combine(Application.dataPath, "Packages/ADHNetwork/ClientConfig.json");
+        string sourcePath = "Packages/com.haegindev.adhnetwork/ClientConfig.json";
 
         // 프로젝트의 StreamingAssets 폴더 경로
         string streamingAssetsPath = Path.Combine(Application.dataPath, "StreamingAssets");
@@ -27,4 +27,3 @@ public static class StreamingAssetsSetup {
         }
     }
 }
-
