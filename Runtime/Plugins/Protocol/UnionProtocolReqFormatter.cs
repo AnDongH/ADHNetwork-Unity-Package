@@ -26,4 +26,16 @@ namespace ADHNetworkShared.Protocol {
 
     }
 
+    [MemoryPackUnionFormatter(typeof(ProtocolReq))]
+    [MemoryPackUnion(0, typeof(PostTestReq))]
+    public partial class UnionProtocolReqFormatter {
+
+    }
+
+    [MemoryPackUnionFormatter(typeof(ProtocolRes))]
+    [MemoryPackUnion(0, typeof(PostTestRes))]
+    public partial class UnionProtocolResFormatter {
+
+    }
+
 }

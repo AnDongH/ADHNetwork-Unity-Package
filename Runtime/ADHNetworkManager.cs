@@ -21,8 +21,6 @@ public static class ADHNetworkManager {
 
         try {
 
-            UnionProtocolFormatter.Register();
-
             var clientKeyPair = DiffieHellman.GenerateECKeyPair();
             var clientPrivateKey = clientKeyPair.Private as ECPrivateKeyParameters;
             var clientPublicKey = clientKeyPair.Public as ECPublicKeyParameters;
@@ -66,7 +64,11 @@ public static class ADHNetworkManager {
     public static async UniTask PostRequestAsync(ProtocolReq req) {
 
         try {
-            
+
+            //UnionProtocolFormatter.Register();
+            UnionProtocolReqFormatterInitializer.RegisterFormatter();
+            UnionProtocolResFormatterInitializer.RegisterFormatter();
+
             byte[] reqBytes = MemoryPackSerializer.Serialize(req);
             (byte[] encryptedReq, byte[] iv) = AES.EncryptAES(reqBytes);
 

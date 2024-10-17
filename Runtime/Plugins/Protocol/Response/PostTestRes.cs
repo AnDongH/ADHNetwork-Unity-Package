@@ -10,6 +10,9 @@ namespace ADHNetworkShared.Protocol {
 
         public string content = "";
 
+        public PostTestRes(string content) : base() { 
+            this.content = content;
+        }
     }
 
 }

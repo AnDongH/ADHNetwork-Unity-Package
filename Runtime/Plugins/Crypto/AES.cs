@@ -5,6 +5,7 @@ using Org.BouncyCastle.Crypto.Parameters;
 using Org.BouncyCastle.Crypto;
 using Org.BouncyCastle.Security;
 using System;
+using ADHNetworkShared.Protocol;
 
 namespace ADHNetworkShared.Crypto {
     public static class AES {
