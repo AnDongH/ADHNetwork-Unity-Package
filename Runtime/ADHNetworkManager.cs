@@ -21,8 +21,7 @@ public static class ADHNetworkManager {
 
         try {
 
-            UnionProtocolReqFormatterInitializer.RegisterFormatter();
-            UnionProtocolResFormatterInitializer.RegisterFormatter();
+            UnionProtocolFormatter.Register();
 
             var clientKeyPair = DiffieHellman.GenerateECKeyPair();
             var clientPrivateKey = clientKeyPair.Private as ECPrivateKeyParameters;

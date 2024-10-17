@@ -5,21 +5,25 @@ using System.Diagnostics.CodeAnalysis;
 using System.Runtime.CompilerServices;
 using System.Text;
 using MemoryPack;
+using MemoryPack.Formatters;
 
 
 namespace ADHNetworkShared.Protocol {
 
-    [MemoryPackUnionFormatter(typeof(ProtocolReq))]
-    [MemoryPackUnion(0, typeof(PostTestReq))]
-    public partial class UnionProtocolReqFormatter {
+    public static class UnionProtocolFormatter {
+        
+        public static void Register() {
+            
+            var req = new DynamicUnionFormatter<ProtocolReq>(
+            (0, typeof(PostTestReq)));
+
+            var res = new DynamicUnionFormatter<ProtocolRes>(
+            (0, typeof(PostTestRes)));
+
+            MemoryPackFormatterProvider.Register(req);
+            MemoryPackFormatterProvider.Register(res);
+        }
 
     }
-
-    [MemoryPackUnionFormatter(typeof(ProtocolRes))]
-    [MemoryPackUnion(0, typeof(PostTestRes))]
-    public partial class UnionProtocolResFormatter {
-
-    }
-
 
 }
