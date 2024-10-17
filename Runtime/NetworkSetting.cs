@@ -13,7 +13,7 @@ public static class NetworkSetting
         UnionProtocolReqFormatterInitializer.RegisterFormatter();
         UnionProtocolResFormatterInitializer.RegisterFormatter();
 
-        Config.Load("ClientConfig.json", configData);
+        Config.Load("ClientConfig.json", Application.streamingAssetsPath, configData);
 
     }
     
