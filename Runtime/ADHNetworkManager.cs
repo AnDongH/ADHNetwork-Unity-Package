@@ -21,22 +21,17 @@ public static class ADHNetworkManager {
 
         try {
 
-            UnionProtocolResFormatterInitializer.RegisterFormatter();
             UnionProtocolReqFormatterInitializer.RegisterFormatter();
+            UnionProtocolResFormatterInitializer.RegisterFormatter();
             
-
             var clientKeyPair = DiffieHellman.GenerateECKeyPair();
             var clientPrivateKey = clientKeyPair.Private as ECPrivateKeyParameters;
             var clientPublicKey = clientKeyPair.Public as ECPublicKeyParameters;
 
             using (HttpResponseMessage res = await Client.PostAsync($"{ServerUrl}/handshake", new ByteArrayContent(clientPublicKey.Q.GetEncoded()))) {
-
-                byte[] serverPublicKeyCode = await res.Content.ReadAsByteArrayAsync();
-
-                AES.key = DiffieHellman.GenerateSharedSecret(clientPrivateKey, DiffieHellman.RestorePublicBytesToKey(serverPublicKeyCode));
-
-                Debug.Log(BitConverter.ToString(AES.key));
-                Debug.Log(AES.key.Length);
+            
+                AES.key = DiffieHellman.GenerateSharedSecret(clientPrivateKey, DiffieHellman.RestorePublicBytesToKey(await res.Content.ReadAsByteArrayAsync()));
+            
             }
 
         } catch (Exception ex) {
@@ -53,10 +48,11 @@ public static class ADHNetworkManager {
 
             using (HttpResponseMessage m = await Client.GetAsync($"{ServerUrl}{req.Path}"))
             using (Stream st = await m.Content.ReadAsStreamAsync()) {
+
                 EncryptedData data = await MemoryPackSerializer.DeserializeAsync<EncryptedData>(st);
-                byte[] decryptedData = AES.DecryptAES(data.Data, data.IV);
-                ProtocolRes res = MemoryPackSerializer.Deserialize<ProtocolRes>(decryptedData);
+                ProtocolRes res = MemoryPackSerializer.Deserialize<ProtocolRes>(AES.DecryptAES(data.Data, data.IV));
                 handlerMap[req.ProtocolID].Process(res);
+                
             }
 
         } catch (Exception ex) {
@@ -69,19 +65,14 @@ public static class ADHNetworkManager {
 
         try {
 
-            byte[] reqBytes = MemoryPackSerializer.Serialize(req);
-            (byte[] encryptedReq, byte[] iv) = AES.EncryptAES(reqBytes);
+            (byte[] encryptedReq, byte[] iv) = AES.EncryptAES(MemoryPackSerializer.Serialize(req));
 
-            EncryptedData encryptedData = new EncryptedData(encryptedReq, iv);
-            byte[] encryptedDataBytes = MemoryPackSerializer.Serialize(encryptedData);
-
-            using (HttpResponseMessage m = await Client.PostAsync($"{ServerUrl}{req.Path}", new ByteArrayContent(encryptedDataBytes))) {
-                byte[] mb = await m.Content.ReadAsByteArrayAsync();
-                EncryptedData data = MemoryPackSerializer.Deserialize<EncryptedData>(mb);
-                byte[] decryptedData = AES.DecryptAES(data.Data, data.IV);
-                ProtocolRes res = MemoryPackSerializer.Deserialize<ProtocolRes>(decryptedData);
-
+            using (HttpResponseMessage m = await Client.PostAsync($"{ServerUrl}{req.Path}", new ByteArrayContent(MemoryPackSerializer.Serialize(new EncryptedData(encryptedReq, iv))))) {
+            
+                EncryptedData data = MemoryPackSerializer.Deserialize<EncryptedData>(await m.Content.ReadAsByteArrayAsync());
+                ProtocolRes res = MemoryPackSerializer.Deserialize<ProtocolRes>(AES.DecryptAES(data.Data, data.IV));
                 handlerMap[req.ProtocolID].Process(res);
+            
             }
         } catch (Exception ex) {
             Debug.LogException(ex);

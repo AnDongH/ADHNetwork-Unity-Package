@@ -6,7 +6,6 @@ using MemoryPack;
 namespace ADHNetworkShared.Protocol {
 
     [MemoryPackable(GenerateType.NoGenerate)]
-    [Serializable]
     public abstract partial class ProtocolRes {
 
     }
