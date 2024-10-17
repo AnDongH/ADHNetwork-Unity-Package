@@ -8,14 +8,11 @@ using System.Text;
 namespace ADHNetworkShared.Util {
 
     public class Config {
-    
-        public static void Load(string path, ConfigData data) {
 
-            var appDirectory = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
-            string filePath = Path.Combine(appDirectory, path);
-            
-            Console.Write(filePath);
-            
+        public static void Load(string fileName, string startPath, ConfigData data) {
+
+            string filePath = Path.Combine(startPath, fileName);
+
             filePath = SearchParentDirectory(filePath, 4);
 
             var config = new ConfigurationBuilder().AddJsonFile(filePath, optional: false, reloadOnChange: false).Build();
