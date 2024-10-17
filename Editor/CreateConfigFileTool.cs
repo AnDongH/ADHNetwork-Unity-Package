@@ -30,6 +30,7 @@ public class CreateConfigFileTool : EditorWindow
         if (!File.Exists(destinationPath)) {
             File.Copy(sourcePath, destinationPath);
             Debug.Log("config.json 파일이 StreamingAssets에 복사되었습니다.");
+            AssetDatabase.Refresh();
         }
 
     }
