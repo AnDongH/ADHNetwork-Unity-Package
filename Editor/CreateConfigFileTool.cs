@@ -5,7 +5,7 @@ using UnityEditor;
 using UnityEditor.PackageManager.UI;
 using UnityEngine;
 
-public class CreateConfigFileTool : EditorWindow
+public class CreateConfigFileTool
 {
 
     [MenuItem("Tool/Create Config")]
