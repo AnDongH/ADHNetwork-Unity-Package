@@ -55,6 +55,8 @@ public static class ADHNetworkManager {
                 
             }
 
+            Debug.Log("handshake: Success key exchange!");
+
         } catch (Exception ex) {
             Debug.LogException(ex);
         }
