@@ -11,10 +11,10 @@ public class CreateConfigFileTool
     [MenuItem("Tool/Create Config")]
     static void Make() {
 
-        //string sourcePath = "Packages/com.haegindev.adhnetwork/ClientConfig.json";
+        string sourcePath = "Packages/com.haegindev.adhnetwork/ClientConfig.json";
 
         // 디버그용 경로////////////////
-        string sourcePath = "Assets/ADHNetwork-Unity-Package/ClientConfig.json";
+        //string sourcePath = "Assets/ADHNetwork-Unity-Package/ClientConfig.json";
         ////////////////////////////////
 
         string streamingAssetsPath = Application.streamingAssetsPath;
