@@ -4,20 +4,24 @@ using System.IO;
 using System.Reflection;
 using Microsoft.Extensions.Configuration;
 using System.Text;
+using ADHNetworkShared.Shared.Util;
 
 namespace ADHNetworkShared.Util {
 
     public class Config {
 
-        public static void Load(string fileName, string startPath, ConfigData data) {
+        public static void Load(string fileName, string startPath) {
 
             string filePath = Path.Combine(startPath, fileName);
 
             filePath = SearchParentDirectory(filePath, 4);
 
-            var config = new ConfigurationBuilder().AddJsonFile(filePath, optional: false, reloadOnChange: false).Build();
+            var tem = new ConfigurationBuilder()
+                .AddJsonFile(filePath, optional: false, reloadOnChange: true)
+                .Build();
 
-            data.SetConfig(config);
+            ConfigData.Setup(tem);
+
         }
 
         public static string SearchParentDirectory(string filePath, int retryParentDirectory = 2) {

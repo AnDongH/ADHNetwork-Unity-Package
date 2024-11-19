@@ -3,10 +3,14 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace ADHNetworkShared.Util {
-    public abstract class ConfigData {
+namespace ADHNetworkShared.Shared.Util {
+    public static class ConfigData {
 
-        public abstract void SetConfig(IConfigurationRoot config);
-        
+        public static IConfigurationRoot _config;
+
+        public static void Setup(IConfigurationRoot config) {
+            _config = config;
+        }
+
     }
 }

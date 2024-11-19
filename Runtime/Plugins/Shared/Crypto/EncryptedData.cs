@@ -17,4 +17,17 @@ namespace ADHNetworkShared.Crypto {
         }
 
     }
+
+    [MemoryPackable]
+    public partial class ClientEncryptedData : EncryptedData {
+
+        public long RedisKey { get; private set; }
+
+        public ClientEncryptedData(byte[] data, byte[] iv, long redisKey) : base(data, iv) {
+
+            RedisKey = redisKey;
+            
+        }
+
+    }
 }

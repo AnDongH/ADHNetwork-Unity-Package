@@ -12,8 +12,6 @@ namespace ADHNetworkShared.Crypto {
 
         private static readonly SecureRandom Random = new SecureRandom();
 
-        public static byte[] key;
-
         // AES 암호화를 위한 키와 IV 생성
         public static byte[] GenerateRandomKey(int size) {
             byte[] key = new byte[size];
@@ -22,11 +20,11 @@ namespace ADHNetworkShared.Crypto {
         }
 
         // AES 암호화
-        public static (byte[], byte[]) EncryptAES(byte[] plainText) {
+        public static (byte[], byte[]) EncryptAES(byte[] plainText, byte[] key) {
             // AES 암호화 엔진 설정
 
             byte[] iv = GenerateRandomKey(16);
-
+           
             AesEngine aesEngine = new AesEngine(); // 기본 AES 엔진 (ECB 모드)
             PaddedBufferedBlockCipher cipher = new PaddedBufferedBlockCipher(new CbcBlockCipher(aesEngine)); // CBC 모드 + 패딩
             KeyParameter keyParam = new KeyParameter(key);
@@ -37,7 +35,8 @@ namespace ADHNetworkShared.Crypto {
         }
 
         // AES 복호화
-        public static byte[] DecryptAES(byte[] cipherText, byte[] iv) {
+        public static byte[] DecryptAES(byte[] cipherText, byte[] key, byte[] iv) {
+
             // AES 복호화 엔진 설정
             AesEngine aesEngine = new AesEngine();
             PaddedBufferedBlockCipher cipher = new PaddedBufferedBlockCipher(new CbcBlockCipher(aesEngine)); // CBC 모드 + 패딩
@@ -46,6 +45,7 @@ namespace ADHNetworkShared.Crypto {
             cipher.Init(false, keyWithIvParam); // false는 복호화 모드
 
             return ProcessCipher(cipher, cipherText);
+        
         }
 
         // AES 암호화/복호화 처리를 위한 공통 메서드
